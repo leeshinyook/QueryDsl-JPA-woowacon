@@ -1,6 +1,7 @@
 package me.shinyook.querydslturn.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.shinyook.querydslturn.domain.Product;
@@ -14,9 +15,8 @@ import java.util.List;
 import static me.shinyook.querydslturn.domain.QProduct.product;
 
 @Repository
-@RequiredArgsConstructor
 public class ProductQueryRepository {
-    private JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     public ProductQueryRepository(EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(entityManager);
@@ -34,11 +34,35 @@ public class ProductQueryRepository {
         if (StringUtils.hasText(name)) {
             builder.and(product.name.eq(name));
         }
+        if (price != null) {
+            builder.and(product.price.eq(price));
+        }
 
         return queryFactory
                 .selectFrom(product)
                 .where(builder)
                 .fetch();
+    }
 
+    public List<Product> findDynamicQueryAdvance(String name, Long price) {
+        return queryFactory
+                .selectFrom(product)
+                .where(eqName(name),
+                        eqPrice(price))
+                .fetch();
+    }
+
+    private BooleanExpression eqName(String name) {
+        if (StringUtils.hasText(name)) {
+            return null;
+        }
+        return product.name.eq(name);
+    }
+
+    private BooleanExpression eqPrice(Long price) {
+        if (price == null) {
+            return null;
+        }
+        return product.price.eq(price);
     }
 }
