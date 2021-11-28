@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.shinyook.querydslturn.domain.Product;
 import me.shinyook.querydslturn.domain.QProduct;
+import me.shinyook.querydslturn.domain.QShop;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static me.shinyook.querydslturn.domain.QProduct.product;
+import static me.shinyook.querydslturn.domain.QShop.shop;
 
 @Repository
 public class ProductQueryRepository {
@@ -76,5 +78,12 @@ public class ProductQueryRepository {
                 .fetchFirst();
 
         return fetchOne != null;
+    }
+
+    public List<Product> notCrossJoin() {
+        return queryFactory
+                .selectFrom(product)
+                .innerJoin(product.shop, shop)
+                .fetch();
     }
 }
