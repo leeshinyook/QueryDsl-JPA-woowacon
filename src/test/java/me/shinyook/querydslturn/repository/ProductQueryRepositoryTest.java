@@ -108,6 +108,18 @@ class ProductQueryRepositoryTest {
         }
         products = productQueryRepository.getProducts("이건없어", 0, 10);
         assertThat(products).isEmpty();
+    }
 
+    @Test
+    @DisplayName("QueryDsl-JPA-bulk update")
+    void bulkUpdate() {
+        Long productId = product.getProductId();
+        productQueryRepository.update("아이맥", productId);
+        entityManager.flush();
+        entityManager.clear();
+        List<Product> products = productQueryRepository.findByName("아이맥");
+        for (Product p : products) {
+            assertThat(p.getName()).isEqualTo("아이맥");
+        }
     }
 }

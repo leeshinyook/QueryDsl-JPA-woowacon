@@ -39,7 +39,7 @@ public class ProductQueryRepository {
                 .where(product.name.eq(name))
                 .fetch();
     }
-
+/*
     public List<Product> findDynamicQuery(String name, Long price) {
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -55,7 +55,7 @@ public class ProductQueryRepository {
                 .where(builder)
                 .fetch();
     }
-
+*/
     public List<Product> findDynamicQueryAdvance(String name, Long price) {
         return queryFactory
                 .selectFrom(product)
@@ -139,5 +139,18 @@ public class ProductQueryRepository {
                 .where(product.productId.in(ids))
                 .orderBy(product.productId.desc())
                 .fetch();
+    }
+
+    /**
+     * DirtyChecking 을 사용하지 않음. Hibernate Session CacheEvict 필수.
+     * @param productName
+     * @param lowerProductId
+     */
+    public void update(String productName, Long lowerProductId) {
+        queryFactory
+                .update(product)
+                .where(product.productId.loe(lowerProductId))
+                .set(product.name, productName)
+                .execute();
     }
 }
