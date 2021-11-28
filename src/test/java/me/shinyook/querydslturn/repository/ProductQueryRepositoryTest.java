@@ -29,10 +29,12 @@ class ProductQueryRepositoryTest {
 
     ProductQueryRepository productQueryRepository;
 
+    Product product;
+
     @BeforeEach
     void init() {
         productQueryRepository = new ProductQueryRepository(entityManager);
-        Product product = new Product("아이패드", ProductCondition.NEW, 600000L);
+        product = new Product("아이패드", ProductCondition.NEW, 600000L);
         entityManager.persist(product);
     }
 
@@ -52,6 +54,12 @@ class ProductQueryRepositoryTest {
         for (Product product : products) {
             assertThat(product.getName()).isEqualTo("아이패드");
         }
+    }
+
+    @Test
+    void existProduct() {
+        Boolean exist = productQueryRepository.exist(product.getId());
+        assertThat(exist).isTrue();
     }
 
 }

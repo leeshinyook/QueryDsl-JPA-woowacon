@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import me.shinyook.querydslturn.domain.Product;
 import me.shinyook.querydslturn.domain.QProduct;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -64,5 +65,16 @@ public class ProductQueryRepository {
             return null;
         }
         return product.price.eq(price);
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean exist(Long productId) {
+        Integer fetchOne = queryFactory
+                .selectOne()
+                .from(product)
+                .where(product.id.eq(productId))
+                .fetchFirst();
+
+        return fetchOne != null;
     }
 }
