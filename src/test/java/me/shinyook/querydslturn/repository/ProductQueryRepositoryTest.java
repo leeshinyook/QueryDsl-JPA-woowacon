@@ -90,4 +90,12 @@ class ProductQueryRepositoryTest {
         }
     }
 
+    @Test
+    @DisplayName("QueryDsl-JPA-groupBy Optimizing 조회")
+    void groupBy() {
+        List<String> productNames = productQueryRepository.OptimizedGroupBy();
+        for (String name : productNames) {
+            assertThat(name).isEqualTo("아이패드");
+        }
+    }
 }

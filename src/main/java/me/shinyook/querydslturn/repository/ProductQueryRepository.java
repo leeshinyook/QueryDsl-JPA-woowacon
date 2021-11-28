@@ -1,6 +1,7 @@
 package me.shinyook.querydslturn.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -10,6 +11,7 @@ import me.shinyook.querydslturn.domain.Product;
 import me.shinyook.querydslturn.domain.QProduct;
 import me.shinyook.querydslturn.domain.QShop;
 import me.shinyook.querydslturn.dto.ProductDto;
+import me.shinyook.querydslturn.repository.common.OrderByNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -17,6 +19,8 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static me.shinyook.querydslturn.domain.QProduct.product;
 import static me.shinyook.querydslturn.domain.QShop.shop;
 
@@ -99,6 +103,15 @@ public class ProductQueryRepository {
                 ))
                 .from(product)
                 .where(product.name.eq(productName))
+                .fetch();
+    }
+
+    public List<String> OptimizedGroupBy() {
+        return queryFactory
+                .select(product.name)
+                .from(product)
+                .groupBy(product.name)
+                .orderBy(OrderByNull.DEFAULT)
                 .fetch();
     }
 }
