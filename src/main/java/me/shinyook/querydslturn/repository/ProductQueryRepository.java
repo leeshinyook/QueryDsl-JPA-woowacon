@@ -1,12 +1,15 @@
 package me.shinyook.querydslturn.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import me.shinyook.querydslturn.domain.Product;
 import me.shinyook.querydslturn.domain.QProduct;
 import me.shinyook.querydslturn.domain.QShop;
+import me.shinyook.querydslturn.dto.ProductDto;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -74,7 +77,7 @@ public class ProductQueryRepository {
         Integer fetchOne = queryFactory
                 .selectOne()
                 .from(product)
-                .where(product.id.eq(productId))
+                .where(product.productId.eq(productId))
                 .fetchFirst();
 
         return fetchOne != null;
@@ -84,6 +87,18 @@ public class ProductQueryRepository {
         return queryFactory
                 .selectFrom(product)
                 .innerJoin(product.shop, shop)
+                .fetch();
+    }
+
+    public List<ProductDto> getProduct(String productName) {
+        return queryFactory
+                .select(Projections.fields(ProductDto.class,
+                        product.productId,
+                        Expressions.asString(productName).as("name"),
+                        product.price
+                ))
+                .from(product)
+                .where(product.name.eq(productName))
                 .fetch();
     }
 }

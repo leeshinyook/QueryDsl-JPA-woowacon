@@ -3,6 +3,7 @@ package me.shinyook.querydslturn.repository;
 import me.shinyook.querydslturn.domain.Product;
 import me.shinyook.querydslturn.domain.ProductCondition;
 import me.shinyook.querydslturn.domain.Shop;
+import me.shinyook.querydslturn.dto.ProductDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,7 @@ class ProductQueryRepositoryTest {
     @Test
     @DisplayName("QueryDsl-JPA-커스텀 Exist조회 (Limit1)")
     void existProduct() {
-        Boolean exist = productQueryRepository.exist(product.getId());
+        Boolean exist = productQueryRepository.exist(product.getProductId());
         assertThat(exist).isTrue();
     }
 
@@ -77,6 +78,15 @@ class ProductQueryRepositoryTest {
         for (Product product : products) {
             assertThat(product.getName()).isEqualTo("아이패드");
             assertThat(product.getShop().getName()).isEqualTo("애플");
+        }
+    }
+
+    @Test
+    @DisplayName("QueryDsl-JPA-Selection Projection 조회")
+    void projectionSelect() {
+        List<ProductDto> products = productQueryRepository.getProduct("아이패드");
+        for (ProductDto product : products) {
+            assertThat(product.getName()).isEqualTo("아이패드");
         }
     }
 
