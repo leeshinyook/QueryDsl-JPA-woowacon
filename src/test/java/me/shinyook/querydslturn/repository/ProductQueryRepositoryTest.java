@@ -98,4 +98,16 @@ class ProductQueryRepositoryTest {
             assertThat(name).isEqualTo("아이패드");
         }
     }
+
+    @Test
+    @DisplayName("QueryDsl-JPA-groupBy CoveringIndex seperate 조회")
+    void getProducts() {
+        List<ProductDto> products = productQueryRepository.getProducts("아이", 0, 10);
+        for (ProductDto productDto : products) {
+            assertThat(productDto.getName()).contains("아이");
+        }
+        products = productQueryRepository.getProducts("이건없어", 0, 10);
+        assertThat(products).isEmpty();
+
+    }
 }

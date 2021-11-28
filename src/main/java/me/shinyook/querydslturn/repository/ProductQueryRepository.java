@@ -14,9 +14,11 @@ import me.shinyook.querydslturn.dto.ProductDto;
 import me.shinyook.querydslturn.repository.common.OrderByNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -112,6 +114,30 @@ public class ProductQueryRepository {
                 .from(product)
                 .groupBy(product.name)
                 .orderBy(OrderByNull.DEFAULT)
+                .fetch();
+    }
+
+    public List<ProductDto> getProducts(String productName, int pageNo, int pageSize) {
+        List<Long> ids = queryFactory
+                .select(product.productId)
+                .from(product)
+                .where(product.name.like(productName + "%"))
+                .orderBy(product.productId.desc())
+                .limit(pageSize)
+                .offset(pageNo * pageSize)
+                .fetch();
+        if (CollectionUtils.isEmpty(ids)) {
+            return new ArrayList<>();
+        }
+        return queryFactory
+                .select(Projections.fields(ProductDto.class,
+                        product.productId,
+                        product.name,
+                        product.price
+                ))
+                .from(product)
+                .where(product.productId.in(ids))
+                .orderBy(product.productId.desc())
                 .fetch();
     }
 }
