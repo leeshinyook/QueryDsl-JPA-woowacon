@@ -32,17 +32,25 @@ class ProductQueryRepositoryTest {
     @BeforeEach
     void init() {
         productQueryRepository = new ProductQueryRepository(entityManager);
+        Product product = new Product("아이패드", ProductCondition.NEW, 600000L);
+        entityManager.persist(product);
     }
 
     @Test
     void findByName() {
-        Product product = new Product("아이패드", ProductCondition.NEW, 600000L);
-        entityManager.persist(product);
         List<Product> products = productQueryRepository.findByName("아이패드");
         assertThat(products.size()).isOne();
         List<String> productNames = products.stream().map(Product::getName).collect(Collectors.toList());
         for (String productName : productNames) {
             assertThat(productName).isEqualTo("아이패드");
+        }
+    }
+
+    @Test
+    void findProduct() {
+        List<Product> products = productQueryRepository.findDynamicQueryAdvance("아이패드", 600000L);
+        for (Product product : products) {
+            assertThat(product.getName()).isEqualTo("아이패드");
         }
     }
 

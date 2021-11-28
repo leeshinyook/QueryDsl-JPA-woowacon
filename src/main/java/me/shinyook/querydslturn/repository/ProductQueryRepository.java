@@ -53,7 +53,7 @@ public class ProductQueryRepository {
     }
 
     private BooleanExpression eqName(String name) {
-        if (StringUtils.hasText(name)) {
+        if (!StringUtils.hasText(name)) {
             return null;
         }
         return product.name.eq(name);
